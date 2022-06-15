@@ -50,11 +50,12 @@ Index(['flight ID', ' Arrival', ' Departure ', 'success'], dtype='object')
 import pandas as pd
 from datetime import datetime
 from fastapi import FastAPI
-from typing import Union
 from pydantic import BaseModel
+import re
 
 MAX_SUCCESS = 20
 MIN_DIFF = 180  # minutes
+HOUR_REGEX = re.compile(r"(([0-9]){2,2}:([0-9]){2,2})")
 
 
 class Flights:
@@ -125,4 +126,6 @@ def get_flight(flight_id: str):
 
 @app.post("/flights/")
 async def read_root(entry: Entry):
+    if not re.match(HOUR_REGEX, entry.arrival) or not re.match(HOUR_REGEX, entry.departure):
+        return "Please insert arrival and departure with format %H%H:%M%M"
     return flights.add_flight(entry.dict())

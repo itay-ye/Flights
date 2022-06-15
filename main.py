@@ -103,7 +103,6 @@ class Flights:
         self._is_successful(row_dict)
         self.flights_df.loc[len(self.flights_df)] = row_dict
         self.flights_df.sort_values(by='Arrival', inplace=True)
-        print(self.flights_df.to_string())
         return row_dict
 
 

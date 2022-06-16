@@ -1,58 +1,6 @@
-"""
-You have CSV file    having the following  lines
-flight ID, Arrival, Departure ,success
-A12, 09:00, 13:00 ,’’
-A14, 12:00, 19:00 ,’’
-B15, 10:00, 13:00 ,’’
-C124,14:00, 16:00 ,’’
-C23, 08:00, 17:00 ,’’
-B12, 13:01, 16:00 ,’’
-G56, 09:30, 14:00 ,’’
-B35, 16:01, 20:00 ,’’
-A21, 08:00, 13:00 ,’’
-A19, 17:00, 19:00 ,’’
-B55, 11:00, 13:00 ,’’
-C128,12:00, 16:00 ,’’
-C26, 08:00, 17:00 ,’’
-B52, 12:01, 16:00 ,’’
-G86, 07:30, 14:00 ,’’
-B65, 17:01, 20:00 ,’’
-B05, 10:00, 14:00 ,’’
-C1223,12:55, 16:00 ,’’
-C235, 08:00, 22:00 ,’’
-B46, 14:01, 16:00 ,’’
-G88, 09:30, 14:00 ,’’
-B39, 16:01, 20:00 ,’’
-G88, 11:30, 14:05 ,’’
-B39, 16:01, 20:00,’’
-
-Assumptions:
-===========
-Flight id are the same for arrival and departure.
-No more than 20 success     can exists in the airport during the day.
-Success for a flight is if no more than 20 success happens in a day  and greater equal  than 180 minutes
-If there is no success put ‘fail’ in the success column either wise ‘success’
-1)Pls  write down
-Python(JAVA OR C# also can be  acceptable) code that produce the success column
-Should be sorted by arrival time
-2)Write 2 rest api
-GET  to get info about flight
-POST  update the csv file
-
-PLS put the Solution in GIT   and send me the link (give me the correct access  for it).
-Not big files can also sent via mail.
-Solution can also be written in JAVA or C# .
-Answer should be tested.
-GOO LUCK !
-Index(['flight ID', ' Arrival', ' Departure ', 'success'], dtype='object')
-
-"""
 import pandas as pd
 from datetime import datetime
-from fastapi import FastAPI
-from pydantic import BaseModel
 import re
-import uvicorn
 
 MAX_SUCCESS = 20
 MIN_DIFF = 180  # minutes
@@ -111,24 +59,3 @@ class Flights:
 flights = Flights('./flights.csv')
 flights.process_flights()
 flights.export_csv()
-app = FastAPI()
-
-
-class Entry(BaseModel):
-    flightID: str
-    arrival: str
-    departure: str
-
-
-@app.get("/flights/{flight_id}")
-def get_flight(flight_id: str):
-    return flights.get_flight(flight_id)
-
-
-@app.post("/flights/")
-async def read_root(entry: Entry):
-    if not re.match(HOUR_REGEX, entry.arrival) or not re.match(HOUR_REGEX, entry.departure):
-        return "Please insert arrival and departure with format %H%H:%M%M"
-    return flights.add_flight(entry.dict())
-
-uvicorn.run(app, host="0.0.0.0", port="8080")
